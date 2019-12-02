@@ -54,6 +54,17 @@ class XPlayerViewController: WOViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        
+        if #available(iOS 10.0, *) {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault)
+            } catch {
+            }
+        } else {
+            //Fallback on earlier versions
+        }
+        
+
 		self.setupUI()
 		// Action
 		playButtton.addTarget(self, action: #selector(togglePlay), for: .touchUpInside)
