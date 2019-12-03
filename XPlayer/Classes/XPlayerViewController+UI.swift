@@ -33,26 +33,28 @@ extension XPlayerViewController {
 		timelineView.addSubview(timelineDotView)
 
 
+        let bottomMargin:CGFloat = 40
+        let leftMargin:CGFloat = 16
         playerVC.view.edgesToSuperview()
 
         playButtton.size(CGSize.square(24))
-        playButtton.leadingToSuperview(offset: 16)
-        playButtton.bottomToSuperview(offset: -16)
+        playButtton.leadingToSuperview(offset: leftMargin)
+        playButtton.bottomToSuperview(offset: -bottomMargin)
 
         fullScreenButton.size(CGSize.square(24))
-        fullScreenButton.trailingToSuperview(offset: 16)
-        fullScreenButton.bottomToSuperview(offset: -16)
+        fullScreenButton.trailingToSuperview(offset: leftMargin)
+        fullScreenButton.bottomToSuperview(offset: -bottomMargin)
 
-        closeButton.size(CGSize.square(24))
-        closeButton.trailingToSuperview(offset: 16)
+        closeButton.size(CGSize.square(32))
+        closeButton.trailingToSuperview(offset: leftMargin)
         closeButton.topToSuperview(offset: 32)
 
         timelineLabel.centerY(to: fullScreenButton)
-        timelineLabel.trailingToLeading(of: fullScreenButton, offset: -16)
+        timelineLabel.trailingToLeading(of: fullScreenButton, offset: -leftMargin)
 
         timelineViewContainer.height(30)
-        timelineViewContainer.leadingToTrailing(of: playButtton, offset: 16)
-        timelineViewContainer.trailingToLeading(of: timelineLabel, offset: -16)
+        timelineViewContainer.leadingToTrailing(of: playButtton, offset: leftMargin)
+        timelineViewContainer.trailingToLeading(of: timelineLabel, offset: -leftMargin)
         timelineView.centerY(to: playButtton)
 
         timelineViewContainer.leading(to: timelineView)
