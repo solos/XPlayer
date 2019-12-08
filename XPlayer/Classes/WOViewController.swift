@@ -58,7 +58,7 @@ class WOViewController: UIViewController {
         pipCloseButton.addSubview(closeIconImageView)
 
         pipCloseButton.size(CGSize(width: 24, height: 24))
-        pipCloseButton.rightToSuperview(offset: 8)
+        pipCloseButton.rightToSuperview(offset: -8)
         pipCloseButton.topToSuperview(offset: 8)
 
         closeIconImageView.centerInSuperview()
