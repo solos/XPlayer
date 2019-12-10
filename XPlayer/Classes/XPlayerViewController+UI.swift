@@ -45,9 +45,9 @@ extension XPlayerViewController {
         fullScreenButton.trailingToSuperview(offset: leftMargin)
         fullScreenButton.bottomToSuperview(offset: -bottomMargin)
 
-        closeButton.size(CGSize.square(24))
+        closeButton.size(CGSize.square(32))
         closeButton.trailingToSuperview(offset: leftMargin)
-        closeButton.topToSuperview(offset: 50)
+        closeButton.topToSuperview(offset: 35)
 
         timelineLabel.centerY(to: fullScreenButton)
         timelineLabel.trailingToLeading(of: fullScreenButton, offset: -leftMargin)
