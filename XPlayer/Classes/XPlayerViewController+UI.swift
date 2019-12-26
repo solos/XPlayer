@@ -13,7 +13,7 @@ import TinyConstraints
 extension XPlayerViewController {
 	func setupUI() {
 		addChildViewController(playerVC)
-		playerVC.view.isUserInteractionEnabled = false
+        view.layer.zPosition = 9999
 		view.insertSubview(playerVC.view, belowSubview: pipCloseButton)
         playerVC.didMove(toParentViewController: self)
 
@@ -47,7 +47,7 @@ extension XPlayerViewController {
 
         closeButton.size(CGSize.square(32))
         closeButton.trailingToSuperview(offset: leftMargin)
-        closeButton.topToSuperview(offset: 35)
+        closeButton.topToSuperview(offset: 40)
 
         timelineLabel.centerY(to: fullScreenButton)
         timelineLabel.trailingToLeading(of: fullScreenButton, offset: -leftMargin)

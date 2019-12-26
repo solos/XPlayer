@@ -83,8 +83,17 @@ extension XPlayerViewController {
 	}
 	
 	@objc func togglePlay() {
-		if playerVC.player!.rate == 0 {
-			playerVC.player!.play()
+
+        let state = playerVC.player!.timeControlStatus
+        if self.progress == 1 && state != .playing {
+            self.progress = 0
+            playerVC.player!.seek(to: kCMTimeZero)
+            playerVC.player!.play()
+            return
+        }
+
+        if  state == .playing || state == .waitingToPlayAtSpecifiedRate {
+            playerVC.player!.play()
 		} else {
 			playerVC.player!.pause()
 		}
@@ -130,4 +139,16 @@ extension XPlayerViewController {
 		}
 		WOMaintainer.dismiss(completion: nil)
 	}
+    
+    @objc func min() {
+        let currentOrientation = UIApplication.shared.statusBarOrientation
+        if currentOrientation == UIInterfaceOrientation.landscapeLeft {
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            delay(seconds: 0.3) {
+                WOMaintainer.dismiss(completion: nil)
+            }
+            return
+        }
+        WOMaintainer.dismiss(completion: nil)
+    }
 }

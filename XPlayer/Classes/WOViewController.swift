@@ -34,10 +34,17 @@ class WOViewController: UIViewController {
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        
+        
 		// UI
+        view.backgroundColor = .black
 		view.layer.shadowOpacity = 0.3
 		view.layer.shadowOffset = CGSize(width: 0, height: 0)
 		view.layer.rasterizationScale = UIScreen.main.scale
@@ -174,6 +181,7 @@ extension WOViewController {
 	
 	@objc func handleTap(gesture: UITapGestureRecognizer) {
 		guard let window = UIApplication.shared.keyWindow else { return }
+
 		if gesture.state != .ended { return }
 		if WOMaintainer.state == .pip {
 			WOMaintainer.state = .fullscreen
@@ -188,6 +196,7 @@ extension WOViewController {
 	}
 	
 	@objc func didPressPipCloseButton() {
+        
 		WOMaintainer.dismiss(completion: nil)
 	}
 

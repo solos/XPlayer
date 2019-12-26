@@ -16,6 +16,7 @@ class XPlayerViewController: WOViewController {
 	let playButtton = UIButton()
 	let fullScreenButton = UIButton()
 	let closeButton = UIButton()
+    let minButton = UIButton()
 	let timelineLabel = UILabel()
 	let timelineViewContainer = UIView()
 	let timelineView = UIView()
@@ -45,15 +46,25 @@ class XPlayerViewController: WOViewController {
 		super.init()
 		let playerItem = AVPlayerItem(url: url)
 		self.playerVC.player = AVPlayer(playerItem: playerItem)
-		self.playerVC.view.backgroundColor = UIColor.clear
+		self.playerVC.view.backgroundColor = UIColor.black
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-	
+    
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
+    override var inputAccessoryView: UIView? {
+        return nil
+    }
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        
         
         if #available(iOS 10.0, *) {
             do {

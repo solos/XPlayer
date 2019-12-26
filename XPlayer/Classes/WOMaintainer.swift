@@ -32,7 +32,9 @@ class WOMaintainer {
 	static var state: WOState = .out
 	static var vc: WOViewController?
 	static func show(vc: WOViewController) {
-		guard let window = UIApplication.shared.keyWindow else { return }
+		//guard let window = UIApplication.shared.keyWindow else { return }
+        guard let window = UIApplication.shared.windows.last else { return }
+
 		if WOMaintainer.state != .out {
 			dismiss(completion: {
 				WOMaintainer.show(vc: vc)
@@ -42,19 +44,23 @@ class WOMaintainer {
 		WOMaintainer.vc = vc
 		vc.view.alpha = 0
 		UIView.animate(withDuration: 0.3) {
-			WOMaintainer.vc!.view.alpha = 1
+            WOMaintainer.vc!.view.alpha = 1
 		}
 		window.addSubview(WOMaintainer.vc!.view)
+
+
 
         vc.leadingConstraint = vc.view.leadingToSuperview()
         vc.topConstraint = vc.view.topToSuperview()
         vc.trailingConstraint = vc.view.trailingToSuperview()
         vc.bottomConstraint = vc.view.bottomToSuperview()
-
+        
 		WOMaintainer.state = .fullscreen
 	}
 	
 	static func dismiss(completion: (()->())?) {
+        
+
         guard let vc = WOMaintainer.vc else { return }
 		UIView.animate(withDuration: 0.3, animations: {
 			vc.view.alpha = 0
