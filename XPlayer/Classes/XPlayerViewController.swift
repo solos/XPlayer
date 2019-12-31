@@ -13,7 +13,12 @@ import AVFoundation
 class XPlayerViewController: WOViewController {
 	// UI
 	let playerVC = AVPlayerViewController(nibName: nil, bundle: nil)
+    var speed = ""
 	let playButtton = UIButton()
+    let speedButton_05 = UIButton()
+    let speedButton_1 = UIButton()
+    let speedButton_15 = UIButton()
+    let speedButton_2 = UIButton()
 	let fullScreenButton = UIButton()
 	let closeButton = UIButton()
     let minButton = UIButton()
@@ -78,6 +83,10 @@ class XPlayerViewController: WOViewController {
 
 		self.setupUI()
 		// Action
+        speedButton_05.addTarget(self, action: #selector(togglePlaySpeed05), for: .touchUpInside)
+        speedButton_1.addTarget(self, action: #selector(togglePlaySpeed1), for: .touchUpInside)
+        speedButton_15.addTarget(self, action: #selector(togglePlaySpeed15), for: .touchUpInside)
+        speedButton_2.addTarget(self, action: #selector(togglePlaySpeed2), for: .touchUpInside)
 		playButtton.addTarget(self, action: #selector(togglePlay), for: .touchUpInside)
 		fullScreenButton.addTarget(self, action: #selector(toggleOrientationSwitch), for: .touchUpInside)
 		closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)

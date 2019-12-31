@@ -21,7 +21,7 @@ extension XPlayerViewController {
 			layer.opacity = 0
             self.view.layer.addSublayer(layer)
 		}
-		[playButtton, closeButton, fullScreenButton, timelineLabel].forEach { button in
+		[playButtton, speedButton_05, speedButton_1, speedButton_15, speedButton_2, closeButton, fullScreenButton, timelineLabel].forEach { button in
 			button.layer.zPosition = 10
 			self.view.addSubview(button)
 		}
@@ -48,6 +48,22 @@ extension XPlayerViewController {
         closeButton.size(CGSize.square(32))
         closeButton.trailingToSuperview(offset: leftMargin)
         closeButton.topToSuperview(offset: 40)
+        
+        speedButton_05.size(CGSize.square(32))
+        speedButton_05.trailingToSuperview(offset: leftMargin + 40)
+        speedButton_05.centerY(to: closeButton)
+        
+        speedButton_1.size(CGSize.square(32))
+        speedButton_1.trailingToSuperview(offset: leftMargin + 40 + 40)
+        speedButton_1.centerY(to: closeButton)
+        
+        speedButton_15.size(CGSize.square(32))
+        speedButton_15.trailingToSuperview(offset: leftMargin + 40 + 40 + 40)
+        speedButton_15.centerY(to: closeButton)
+        
+        speedButton_2.size(CGSize.square(32))
+        speedButton_2.trailingToSuperview(offset: leftMargin + 40 + 40 + 40 + 40)
+        speedButton_2.centerY(to: closeButton)
 
         timelineLabel.centerY(to: fullScreenButton)
         timelineLabel.trailingToLeading(of: fullScreenButton, offset: -leftMargin)
@@ -71,6 +87,21 @@ extension XPlayerViewController {
 		playButtton.setImage(UIImage.bundleImage("play_24")?.withRenderingMode(.alwaysTemplate), for: [])
 		playButtton.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 		playButtton.imageView?.contentMode = .scaleAspectFit
+        
+        speedButton_05.setTitle("0.5", for: .normal)
+        speedButton_05.titleLabel?.textColor = .white
+        
+        speedButton_1.setTitle("1.0", for: .normal)
+        speedButton_1.titleLabel?.textColor = .white
+        
+        speedButton_15.setTitle("1.5", for: .normal)
+        speedButton_15.titleLabel?.textColor = .white
+
+        speedButton_2.setTitle("2.0", for: .normal)
+        speedButton_2.titleLabel?.textColor = .white
+        
+        updateSpeedButton()
+
 		fullScreenButton.setImage(UIImage.bundleImage("maximize_24")?.withRenderingMode(.alwaysTemplate), for: [])
 		fullScreenButton.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 		fullScreenButton.imageView?.contentMode = .scaleAspectFit
@@ -92,4 +123,34 @@ extension XPlayerViewController {
 		bottomGradientLayer.opacity = 0
 		timelineViewContainer.isUserInteractionEnabled = false
 	}
+    
+    func updateSpeedButton(){
+        
+        speedButton_05.layer.borderWidth = 0
+        speedButton_1.layer.borderWidth = 0
+        speedButton_15.layer.borderWidth = 0
+        speedButton_2.layer.borderWidth = 0
+        
+        switch (self.speed){
+            case "":
+                speedButton_1.layer.borderColor = UIColor.white.cgColor
+                speedButton_1.layer.borderWidth = 1.0
+            case "0.5":
+                speedButton_05.layer.borderColor = UIColor.white.cgColor
+                speedButton_05.layer.borderWidth = 1.0
+            case "1.0":
+                speedButton_1.layer.borderColor = UIColor.white.cgColor
+                speedButton_1.layer.borderWidth = 1.0
+            case "1.5":
+                speedButton_15.layer.borderColor = UIColor.white.cgColor
+                speedButton_15.layer.borderWidth = 1.0
+            case "2.0":
+                speedButton_2.layer.borderColor = UIColor.white.cgColor
+                speedButton_2.layer.borderWidth = 1.0
+            default:
+                speedButton_1.layer.borderColor = UIColor.white.cgColor
+                speedButton_1.layer.borderWidth = 1.0
+        }
+        
+    }
 }

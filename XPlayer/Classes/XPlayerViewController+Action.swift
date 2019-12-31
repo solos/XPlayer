@@ -49,7 +49,8 @@ extension XPlayerViewController {
 			UIView.animate(withDuration: 0.3){ [weak self] in
 				guard let _self = self else { return }
 				[
-					_self.playButtton, _self.fullScreenButton,
+					_self.playButtton,
+                    _self.fullScreenButton,
 					_self.timelineLabel, _self.timelineViewContainer
 				].forEach({ (view) in
 					view.layer.transform = CATransform3DMakeTranslation(0, 30, 0)
@@ -59,15 +60,29 @@ extension XPlayerViewController {
 				self?.bottomGradientLayer.transform = CATransform3DMakeTranslation(0, UIScreen.main.bounds.height, 0)
 				self?.closeButton.layer.transform = CATransform3DMakeTranslation(0, -50, 0)
 				self?.closeButton.alpha = 0
+                
+                self?.speedButton_05.layer.transform = CATransform3DMakeTranslation(0, -50, 0)
+                self?.speedButton_05.alpha = 0
+                
+                self?.speedButton_1.layer.transform = CATransform3DMakeTranslation(0, -50, 0)
+                self?.speedButton_1.alpha = 0
+                
+                self?.speedButton_15.layer.transform = CATransform3DMakeTranslation(0, -50, 0)
+                self?.speedButton_15.alpha = 0
+                
+                self?.speedButton_2.layer.transform = CATransform3DMakeTranslation(0, -50, 0)
+                self?.speedButton_2.alpha = 0
+                
 			}
 		} else {
 			showingControls = true
 			UIView.animate(withDuration: 0.3){ [weak self] in
 				guard let _self = self else { return }
 				[
-					_self.playButtton, _self.fullScreenButton,
+					_self.playButtton,
+                    _self.fullScreenButton,
 					_self.timelineLabel, _self.timelineViewContainer,
-					_self.closeButton
+					_self.speedButton_05, _self.speedButton_1, _self.speedButton_15, _self.speedButton_2,_self.closeButton
 				].forEach { (view) in
 					view.layer.transform = CATransform3DIdentity
 					view.alpha = 1
@@ -82,6 +97,31 @@ extension XPlayerViewController {
 		}
 	}
 	
+    
+    @objc func togglePlaySpeed05() {
+        playerVC.player!.rate = 0.5
+        self.speed = "0.5"
+        updateSpeedButton()
+    }
+    
+    @objc func togglePlaySpeed1() {
+        playerVC.player!.rate = 1.0
+        self.speed = "1.0"
+        updateSpeedButton()
+    }
+    
+    @objc func togglePlaySpeed15() {
+        playerVC.player!.rate = 1.5
+        self.speed = "1.5"
+        updateSpeedButton()
+    }
+    
+    @objc func togglePlaySpeed2() {
+        playerVC.player!.rate = 2.0
+        self.speed = "2.0"
+        updateSpeedButton()
+    }
+    
 	@objc func togglePlay() {
 
         let state = playerVC.player!.timeControlStatus
@@ -93,9 +133,9 @@ extension XPlayerViewController {
         }
 
         if  state == .playing || state == .waitingToPlayAtSpecifiedRate {
-            playerVC.player!.play()
+            playerVC.player!.pause()
 		} else {
-			playerVC.player!.pause()
+            playerVC.player!.play()
 		}
 	}
 	

@@ -30,7 +30,7 @@ extension XPlayerViewController {
 		UIView.animate(withDuration: 0.3) { [weak self] in
 			guard let _self = self else { return }
 			[
-				_self.playButtton, _self.closeButton,
+                _self.playButtton, _self.speedButton_05, _self.speedButton_1, _self.speedButton_15, _self.speedButton_2, _self.closeButton,
 				_self.fullScreenButton, _self.timelineLabel,
 				_self.closeButton, _self.timelineViewContainer
 			].forEach { (element) in
@@ -47,7 +47,7 @@ extension XPlayerViewController {
 		UIView.animate(withDuration: 0.3) { [weak self] in
 			guard let _self = self else { return }
 			[
-				_self.playButtton, _self.closeButton,
+				_self.playButtton, _self.speedButton_05, _self.speedButton_1, _self.speedButton_15, _self.speedButton_2,_self.closeButton,
 				_self.fullScreenButton, _self.timelineLabel,
 				_self.closeButton, _self.timelineViewContainer
 			].forEach { (element) in
