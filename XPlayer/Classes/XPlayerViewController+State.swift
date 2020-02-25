@@ -17,11 +17,15 @@ extension XPlayerViewController {
 	
 	override func didEnterOut() {
 		super.didEnterOut()
-		self.playerVC.player!.removeObserver(self, forKeyPath: "rate")
-		self.playerVC.player!.currentItem!.removeObserver(self, forKeyPath: "status")
+        if self.playerVC.player != nil {
+    		self.playerVC.player!.removeObserver(self, forKeyPath: "rate")
+    		self.playerVC.player!.currentItem!.removeObserver(self, forKeyPath: "status")
+        }
 		NotificationCenter.default.removeObserver(self)
-		self.playerVC.player!.pause()
-		self.playerVC.player = nil
+        if self.playerVC.player != nil {
+    		self.playerVC.player!.pause()
+    		self.playerVC.player = nil
+        }
 	}
 	
 	override func didEnterFullScreen() {
