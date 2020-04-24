@@ -60,7 +60,7 @@ class XPlayerViewController: WOViewController {
     
     
     override var canBecomeFirstResponder: Bool {
-        return true
+        return false
     }
     
     override var inputAccessoryView: UIView? {
