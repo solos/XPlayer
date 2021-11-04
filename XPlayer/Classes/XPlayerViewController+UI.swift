@@ -12,11 +12,11 @@ import TinyConstraints
 
 extension XPlayerViewController {
 	func setupUI() {
-		addChildViewController(playerVC)
+        addChild(playerVC)
 		playerVC.view.isUserInteractionEnabled = false
         	view.layer.zPosition = 9999
 		view.insertSubview(playerVC.view, belowSubview: pipCloseButton)
-        	playerVC.didMove(toParentViewController: self)
+        playerVC.didMove(toParent: self)
 
 		[topGradientLayer, bottomGradientLayer].forEach { (layer) in
 			layer.opacity = 0

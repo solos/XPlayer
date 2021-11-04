@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 import TinyConstraints
 
 /// Window Overlay View Controller
@@ -82,6 +83,10 @@ class WOViewController: UIViewController {
 
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
 		view.addGestureRecognizer(tapGesture)
+        
+        
+ 
+        
 	}
 }
 
@@ -194,7 +199,9 @@ extension WOViewController {
 			}
 		}
 	}
-	
+    
+    
+    
 	@objc func didPressPipCloseButton() {
         
 		WOMaintainer.dismiss(completion: nil)
@@ -227,6 +234,8 @@ extension WOViewController {
 
     @objc func didEnterOut() {
     }
+    
+
 }
 
 // MARK: Animation
@@ -268,6 +277,7 @@ fileprivate func insideFrame(objectFrame: CGRect, superViewSize: CGSize, inset: 
 		targetFrame.origin.y = inset
 	}
 	if targetFrame.origin.y + targetFrame.size.height > superViewSize.height - inset {
+        
 		targetFrame.origin.y = superViewSize.height - inset - targetFrame.size.height
 	}
 	return targetFrame

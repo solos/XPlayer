@@ -22,7 +22,7 @@ extension XPlayerViewController {
 			handleTouchInTimelineView(location: locationInTimelineView)
 		case .ended, .cancelled:
 			let targetTime = CMTimeGetSeconds(self.playerVC.player!.currentItem!.duration) * Double(self.progress)
-			playerVC.player!.seek(to: CMTimeMakeWithSeconds(targetTime, 1), completionHandler: { _ in
+            playerVC.player!.seek(to: CMTimeMakeWithSeconds(targetTime, preferredTimescale: 1), completionHandler: { _ in
 				self.playerVC.player!.play()
 			})
 		default: break
@@ -30,16 +30,30 @@ extension XPlayerViewController {
 	}
 	
 	private func handleTouchInTimelineView(location: CGPoint) {
-		let properLocationX = min(max(location.x, 0), self.timelineView.bounds.width)
+        let properLocationX = Swift.min(max(location.x, 0), self.timelineView.bounds.width)
 		self.progress = properLocationX / self.timelineView.bounds.width
 		// update timeline text
 		let totalTime = Float64(CMTimeGetSeconds(self.playerVC.player!.currentItem!.duration))
 		guard let totalTimeString = self.playerVC.player!.currentItem!.duration.timecode() else { return }
 		let currentTime = totalTime * Float64(self.progress)
-		guard let currentTimeString = CMTimeMakeWithSeconds(currentTime, 1).timecode() else { return }
+        guard let currentTimeString = CMTimeMakeWithSeconds(currentTime, preferredTimescale: 1).timecode() else { return }
 		self.timelineLabel.text = currentTimeString + " / " + totalTimeString
 	}
-	
+    
+    @objc func handleRight(gesture: UISwipeGestureRecognizer){
+        
+    }
+    
+    
+    @objc func tapClose(gesture: UITapGestureRecognizer){
+        self.didPressClose()
+    }
+
+    @objc func tapPause(gesture: UITapGestureRecognizer){
+        self.togglePlay()
+
+    }
+    
 	@objc func toggleShowControls(gesture: UITapGestureRecognizer) {
 		if gesture.state != .ended { return }
 		let location = gesture.location(in: self.view)
@@ -120,6 +134,18 @@ extension XPlayerViewController {
         playerVC.player!.rate = 2.0
         self.speed = "2.0"
         updateSpeedButton()
+        
+        
+        /*
+        if (self.pip.isPictureInPictureActive) {
+            [self.pip stopPictureInPicture];
+        } else {
+            [self.pip startPictureInPicture];
+        }
+         */
+        //if self.playerVC.player.is
+
+        //self.playerVC.star
     }
     
 	@objc func togglePlay() {
@@ -127,7 +153,7 @@ extension XPlayerViewController {
         let state = playerVC.player!.timeControlStatus
         if self.progress == 1 && state != .playing {
             self.progress = 0
-            playerVC.player!.seek(to: kCMTimeZero)
+            playerVC.player!.seek(to: CMTime.zero)
             playerVC.player!.play()
             return
         }

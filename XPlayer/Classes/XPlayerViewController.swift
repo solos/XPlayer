@@ -9,10 +9,12 @@
 import UIKit
 import AVKit
 import AVFoundation
+import Photos
 
 class XPlayerViewController: WOViewController {
 	// UI
-	let playerVC = AVPlayerViewController(nibName: nil, bundle: nil)
+    let playerVC = AVPlayerViewController.init(nibName: nil, bundle: nil)
+    var url = ""
     var speed = ""
 	let playButtton = UIButton()
     let speedButton_05 = UIButton()
@@ -43,15 +45,20 @@ class XPlayerViewController: WOViewController {
 		}
 	}
 	var showingControls = true
-	
+
 	let themeColor: UIColor
 	
 	init(url: URL, themeColor: UIColor){
 		self.themeColor = themeColor
 		super.init()
 		let playerItem = AVPlayerItem(url: url)
-		self.playerVC.player = AVPlayer(playerItem: playerItem)
-		self.playerVC.view.backgroundColor = UIColor.black
+        self.url = url.absoluteString
+		
+        
+        self.playerVC.player = AVPlayer(playerItem: playerItem)
+        self.playerVC.allowsPictureInPicturePlayback = true
+        //self.pip = AVPictureInPictureController.init(playerLayer: self.playerVC.player)
+        self.playerVC.view.backgroundColor = UIColor.black
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -73,7 +80,7 @@ class XPlayerViewController: WOViewController {
         
         if #available(iOS 10.0, *) {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault)
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             } catch {
             }
         } else {
@@ -93,10 +100,38 @@ class XPlayerViewController: WOViewController {
 		// Gesture
 		sliderPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleSliderPan))
 		timelineViewContainer.addGestureRecognizer(sliderPanGesture)
+        
+        
 		toggleControlTapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleShowControls))
 		view.addGestureRecognizer(toggleControlTapGesture)
 		// State
 		transitionPanGesture.isEnabled = false
+        
+        let closeTap = UITapGestureRecognizer.init(target: self, action: #selector(tapClose))
+        closeTap.numberOfTapsRequired = 2
+        closeTap.numberOfTouchesRequired = 1
+
+        //let pauseTap = UITapGestureRecognizer.init(target: self, action: #selector(tapPause))
+        //pauseTap.numberOfTapsRequired = 1
+        //pauseTap.numberOfTouchesRequired = 1
+        
+        view.addGestureRecognizer(closeTap)
+        //view.addGestureRecognizer(pauseTap)
+        
+        
+        
+        /*
+        UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleDoubleTap:)];
+        doubleTapGesture.numberOfTapsRequired =2;
+        doubleTapGesture.numberOfTouchesRequired =1;
+        [bgView addGestureRecognizer:doubleTapGesture];
+         */
+
+
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longpress(_:)))
+        longPressRecognizer.minimumPressDuration = 1
+        longPressRecognizer.delaysTouchesBegan = true
+        view.addGestureRecognizer(longPressRecognizer)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -106,12 +141,12 @@ class XPlayerViewController: WOViewController {
 		                             options: [.new],
 		                             context: nil)
 		playerVC.player!.currentItem!.addObserver(self, forKeyPath: "status", options: [.new], context: nil)
-		playerVC.player!.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 1), queue: nil) { [weak self] (time) in
+        playerVC.player!.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 1), queue: nil) { [weak self] (time) in
 			guard let timecode = self?.playerVC.player?.currentItem?.duration.timecode() else { return }
 			guard let currentTimecode = self?.playerVC.player?.currentItem?.currentTime().timecode() else { return }
 			self?.timelineLabel.text = currentTimecode + " / " + timecode
 		}
-		playerVC.player!.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 100), queue: nil) { [weak self] (time) in
+        playerVC.player!.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: nil) { [weak self] (time) in
 			guard let timecode = self?.playerVC.player?.currentItem?.duration else { return }
 			guard let currentTimecode = self?.playerVC.player?.currentItem?.currentTime() else { return }
 			let percentage = CMTimeGetSeconds(currentTimecode) / CMTimeGetSeconds(timecode)
@@ -119,7 +154,7 @@ class XPlayerViewController: WOViewController {
 				self?.progress = CGFloat(percentage)
 			}
 		}
-		NotificationCenter.default.addObserver(self, selector: #selector(handleOrientationChange), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOrientationChange), name: UIDevice.orientationDidChangeNotification, object: nil)
 		playerVC.player?.play()
 	}
 	
@@ -143,7 +178,7 @@ class XPlayerViewController: WOViewController {
 		}
 		// finish loading
 		if keyPath == "status" {
-			if playerVC.player!.currentItem!.status == AVPlayerItemStatus.readyToPlay {
+            if playerVC.player!.currentItem!.status == AVPlayerItem.Status.readyToPlay {
 				self.timelineViewContainer.isUserInteractionEnabled = true
 				if let presentationSize = self.playerVC.player?.currentItem?.presentationSize , presentationSize != CGSize.zero {
 					let pipHeight = WOMaintainerInfo.pipDefaultSize.width * presentationSize.height / presentationSize.width
@@ -152,7 +187,7 @@ class XPlayerViewController: WOViewController {
 				}
 				self.transitionPanGesture.isEnabled = true
 			}
-			if playerVC.player!.currentItem!.status == AVPlayerItemStatus.failed {
+            if playerVC.player!.currentItem!.status == AVPlayerItem.Status.failed {
 			}
 		}
 	}
@@ -164,6 +199,93 @@ class XPlayerViewController: WOViewController {
 	override var prefersStatusBarHidden: Bool {
 		return true
 	}
+    
+    
+    @objc  func longpress(_ sender: UIGestureRecognizer){
+        
+        self.didPressClose()
+        
+        /*
+         if sender.state == .began {
+         
+         let alert = UIAlertController()
+         
+         let videoLink = self.url
+         let saveVideo = UIAlertAction(title: "下载视频", style: .default, handler: {
+         [weak self] ACTION in
+         guard let self = self else { return }
+         
+         DispatchQueue.global(qos: .background).async {
+         if let url = URL(string: videoLink),
+         let urlData = NSData(contentsOf: url) {
+         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+         let ts = Date().timeIntervalSince1970
+         let filePath = "\(documentsPath)/\(ts).mp4"
+         DispatchQueue.main.async {
+         urlData.write(toFile: filePath, atomically: true)
+         PHPhotoLibrary.shared().performChanges({
+         PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL(fileURLWithPath: filePath))
+         }) { [weak self] completed, error in
+         guard let self = self else { return }
+         
+         if error != nil {
+         } else {
+         if completed {
+         }
+         }
+         }
+         }
+         }
+         }
+         })
+         
+         let cancle = UIAlertAction(title: "取消", style: .cancel, handler: {
+         [weak self] ACTION in
+         guard let self = self else { return }
+         })
+         
+         alert.addAction(saveVideo)
+         alert.addAction(cancle)
+         
+         if UIDevice.current.userInterfaceIdiom == .pad {
+         
+         alert.popoverPresentationController?.sourceView = self.view
+         alert.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+         
+         }
+         
+         /*
+         let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+         alertWindow.rootViewController = UIViewController()
+         alertWindow.windowLevel = UIWindowLevelAlert - 1
+         alertWindow.makeKeyAndVisible()
+         alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+         */
+         
+         var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+         if let tab = rootViewController as? UITabBarController {
+             rootViewController = tab.selectedViewController
+             let nav = rootViewController as? UINavigationController
+                 if nav != nil {
+                    
+                     let vc = nav!.topViewController
+                    if vc != nil {
+                        if vc!.presentedViewController != nil {
+                            let v = vc!.presentedViewController
+                            v!.present(alert, animated: true, completion: nil)
+                        } else {
+                            vc!.present(alert, animated: true, completion: nil)
+                        }
+                        
+                    }
+                 }
+             }
+
+         }
+         
+         */
+    }
+   
 }
 
 // MARK: Utils

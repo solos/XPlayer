@@ -49,13 +49,14 @@ class WOMaintainer {
 		window.addSubview(WOMaintainer.vc!.view)
 
 
-
         vc.leadingConstraint = vc.view.leadingToSuperview()
         vc.topConstraint = vc.view.topToSuperview()
         vc.trailingConstraint = vc.view.trailingToSuperview()
         vc.bottomConstraint = vc.view.bottomToSuperview()
         
 		WOMaintainer.state = .fullscreen
+        
+        
 	}
 	
 	static func dismiss(completion: (()->())?) {
