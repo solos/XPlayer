@@ -26,6 +26,7 @@ extension XPlayerViewController {
 			let targetTime = CMTimeGetSeconds(self.playerVC.player!.currentItem!.duration) * Double(self.progress)
             playerVC.player!.seek(to: CMTimeMakeWithSeconds(targetTime, preferredTimescale: 1), completionHandler: { _ in
 				self.playerVC.player!.play()
+                self.resetSpeed()
 			})
 		default: break
 		}
