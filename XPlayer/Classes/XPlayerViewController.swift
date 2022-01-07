@@ -15,12 +15,9 @@ class XPlayerViewController: WOViewController {
 	// UI
     let playerVC = AVPlayerViewController.init(nibName: nil, bundle: nil)
     var url = ""
-    var speed = ""
+    var speed:Float = 1
 	let playButtton = UIButton()
-    let speedButton_05 = UIButton()
-    let speedButton_1 = UIButton()
-    let speedButton_15 = UIButton()
-    let speedButton_2 = UIButton()
+    let speedButton = UIButton()
 	let fullScreenButton = UIButton()
 	let closeButton = UIButton()
     let minButton = UIButton()
@@ -90,13 +87,13 @@ class XPlayerViewController: WOViewController {
 
 		self.setupUI()
 		// Action
-        speedButton_05.addTarget(self, action: #selector(togglePlaySpeed05), for: .touchUpInside)
-        speedButton_1.addTarget(self, action: #selector(togglePlaySpeed1), for: .touchUpInside)
-        speedButton_15.addTarget(self, action: #selector(togglePlaySpeed15), for: .touchUpInside)
-        speedButton_2.addTarget(self, action: #selector(togglePlaySpeed2), for: .touchUpInside)
+        
 		playButtton.addTarget(self, action: #selector(togglePlay), for: .touchUpInside)
+        speedButton.addTarget(self, action: #selector(toggleSpeed), for: .touchUpInside)
 		fullScreenButton.addTarget(self, action: #selector(toggleOrientationSwitch), for: .touchUpInside)
 		closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
+        
+        
 		// Gesture
 		sliderPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleSliderPan))
 		timelineViewContainer.addGestureRecognizer(sliderPanGesture)
@@ -107,15 +104,19 @@ class XPlayerViewController: WOViewController {
 		// State
 		transitionPanGesture.isEnabled = false
         
-        let closeTap = UITapGestureRecognizer.init(target: self, action: #selector(tapClose))
-        closeTap.numberOfTapsRequired = 2
-        closeTap.numberOfTouchesRequired = 1
+        //let closeTap = UITapGestureRecognizer.init(target: self, action: #selector(tapClose))
+        
+        let closeTap = UIPanGestureRecognizer.init(target: self, action: #selector(tapClose))
+        //closeTap.direction = .up
+        
+        //closeTap.numberOfTapsRequired = 2
+        //closeTap.numberOfTouchesRequired = 1
 
         //let pauseTap = UITapGestureRecognizer.init(target: self, action: #selector(tapPause))
         //pauseTap.numberOfTapsRequired = 1
         //pauseTap.numberOfTouchesRequired = 1
         
-        view.addGestureRecognizer(closeTap)
+        //view.addGestureRecognizer(closeTap)
         //view.addGestureRecognizer(pauseTap)
         
         
@@ -128,10 +129,6 @@ class XPlayerViewController: WOViewController {
          */
 
 
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longpress(_:)))
-        longPressRecognizer.minimumPressDuration = 1
-        longPressRecognizer.delaysTouchesBegan = true
-        view.addGestureRecognizer(longPressRecognizer)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -200,92 +197,7 @@ class XPlayerViewController: WOViewController {
 		return true
 	}
     
-    
-    @objc  func longpress(_ sender: UIGestureRecognizer){
-        
-        self.didPressClose()
-        
-        /*
-         if sender.state == .began {
-         
-         let alert = UIAlertController()
-         
-         let videoLink = self.url
-         let saveVideo = UIAlertAction(title: "下载视频", style: .default, handler: {
-         [weak self] ACTION in
-         guard let self = self else { return }
-         
-         DispatchQueue.global(qos: .background).async {
-         if let url = URL(string: videoLink),
-         let urlData = NSData(contentsOf: url) {
-         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-         let ts = Date().timeIntervalSince1970
-         let filePath = "\(documentsPath)/\(ts).mp4"
-         DispatchQueue.main.async {
-         urlData.write(toFile: filePath, atomically: true)
-         PHPhotoLibrary.shared().performChanges({
-         PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL(fileURLWithPath: filePath))
-         }) { [weak self] completed, error in
-         guard let self = self else { return }
-         
-         if error != nil {
-         } else {
-         if completed {
-         }
-         }
-         }
-         }
-         }
-         }
-         })
-         
-         let cancle = UIAlertAction(title: "取消", style: .cancel, handler: {
-         [weak self] ACTION in
-         guard let self = self else { return }
-         })
-         
-         alert.addAction(saveVideo)
-         alert.addAction(cancle)
-         
-         if UIDevice.current.userInterfaceIdiom == .pad {
-         
-         alert.popoverPresentationController?.sourceView = self.view
-         alert.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-         
-         }
-         
-         /*
-         let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-         alertWindow.rootViewController = UIViewController()
-         alertWindow.windowLevel = UIWindowLevelAlert - 1
-         alertWindow.makeKeyAndVisible()
-         alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
-         */
-         
-         var rootViewController = UIApplication.shared.keyWindow?.rootViewController
-         if let tab = rootViewController as? UITabBarController {
-             rootViewController = tab.selectedViewController
-             let nav = rootViewController as? UINavigationController
-                 if nav != nil {
-                    
-                     let vc = nav!.topViewController
-                    if vc != nil {
-                        if vc!.presentedViewController != nil {
-                            let v = vc!.presentedViewController
-                            v!.present(alert, animated: true, completion: nil)
-                        } else {
-                            vc!.present(alert, animated: true, completion: nil)
-                        }
-                        
-                    }
-                 }
-             }
 
-         }
-         
-         */
-    }
-   
 }
 
 // MARK: Utils

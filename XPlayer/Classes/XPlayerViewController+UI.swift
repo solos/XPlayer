@@ -22,7 +22,7 @@ extension XPlayerViewController {
 			layer.opacity = 0
             self.view.layer.addSublayer(layer)
 		}
-		[playButtton, speedButton_05, speedButton_1, speedButton_15, speedButton_2, closeButton, fullScreenButton, timelineLabel].forEach { button in
+		[playButtton, speedButton, closeButton, fullScreenButton, timelineLabel].forEach { button in
 			button.layer.zPosition = 10
 			self.view.addSubview(button)
 		}
@@ -48,30 +48,18 @@ extension XPlayerViewController {
 
         closeButton.size(CGSize.square(32))
         closeButton.trailingToSuperview(offset: leftMargin)
-        closeButton.topToSuperview(offset: 40)
+        closeButton.topToSuperview(offset: 50)
         
-        speedButton_05.size(CGSize.square(32))
-        speedButton_05.trailingToSuperview(offset: leftMargin + 40)
-        speedButton_05.centerY(to: closeButton)
-        
-        speedButton_1.size(CGSize.square(32))
-        speedButton_1.trailingToSuperview(offset: leftMargin + 40 + 40)
-        speedButton_1.centerY(to: closeButton)
-        
-        speedButton_15.size(CGSize.square(32))
-        speedButton_15.trailingToSuperview(offset: leftMargin + 40 + 40 + 40)
-        speedButton_15.centerY(to: closeButton)
-        
-        speedButton_2.size(CGSize.square(32))
-        speedButton_2.trailingToSuperview(offset: leftMargin + 40 + 40 + 40 + 40)
-        speedButton_2.centerY(to: closeButton)
 
+        speedButton.centerY(to: fullScreenButton)
+        speedButton.trailingToLeading(of: timelineLabel, offset: -leftMargin)
+        
         timelineLabel.centerY(to: fullScreenButton)
         timelineLabel.trailingToLeading(of: fullScreenButton, offset: -leftMargin)
 
         timelineViewContainer.height(30)
         timelineViewContainer.leadingToTrailing(of: playButtton, offset: leftMargin)
-        timelineViewContainer.trailingToLeading(of: timelineLabel, offset: -leftMargin)
+        timelineViewContainer.trailingToLeading(of: speedButton, offset: -leftMargin)
         timelineView.centerY(to: playButtton)
 
         timelineViewContainer.leading(to: timelineView)
@@ -89,19 +77,7 @@ extension XPlayerViewController {
 		playButtton.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 		playButtton.imageView?.contentMode = .scaleAspectFit
         
-        speedButton_05.setTitle("0.5", for: .normal)
-        speedButton_05.titleLabel?.textColor = .white
-        
-        speedButton_1.setTitle("1.0", for: .normal)
-        speedButton_1.titleLabel?.textColor = .white
-        
-        speedButton_15.setTitle("1.5", for: .normal)
-        speedButton_15.titleLabel?.textColor = .white
-
-        speedButton_2.setTitle("2.0", for: .normal)
-        speedButton_2.titleLabel?.textColor = .white
-        
-        updateSpeedButton()
+        updateSpeed(speed: 0, title: "")
 
 		fullScreenButton.setImage(UIImage.bundleImage("maximize_24")?.withRenderingMode(.alwaysTemplate), for: [])
 		fullScreenButton.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
@@ -118,6 +94,10 @@ extension XPlayerViewController {
 		timelineLabel.textAlignment = .center
 		timelineLabel.textColor = UIColor.white
 		timelineLabel.text = "00:00 / 00:00"
+        //timelineLabel.font = .monospacedSystemFont(ofSize: 10, weight: .regular)
+        speedButton.setTitleColor(.white, for: .normal)
+        speedButton.setTitle("倍速", for: .normal)
+        speedButton.titleLabel!.font = UIFont.systemFont(ofSize: 10)
 		topGradientLayer.colors = [UIColor.black.cgColor, UIColor.clear.cgColor]
 		topGradientLayer.opacity = 0
 		bottomGradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
@@ -125,33 +105,5 @@ extension XPlayerViewController {
 		timelineViewContainer.isUserInteractionEnabled = false
 	}
     
-    func updateSpeedButton(){
-        
-        speedButton_05.layer.borderWidth = 0
-        speedButton_1.layer.borderWidth = 0
-        speedButton_15.layer.borderWidth = 0
-        speedButton_2.layer.borderWidth = 0
-        
-        switch (self.speed){
-            case "":
-                speedButton_1.layer.borderColor = UIColor.white.cgColor
-                speedButton_1.layer.borderWidth = 1.0
-            case "0.5":
-                speedButton_05.layer.borderColor = UIColor.white.cgColor
-                speedButton_05.layer.borderWidth = 1.0
-            case "1.0":
-                speedButton_1.layer.borderColor = UIColor.white.cgColor
-                speedButton_1.layer.borderWidth = 1.0
-            case "1.5":
-                speedButton_15.layer.borderColor = UIColor.white.cgColor
-                speedButton_15.layer.borderWidth = 1.0
-            case "2.0":
-                speedButton_2.layer.borderColor = UIColor.white.cgColor
-                speedButton_2.layer.borderWidth = 1.0
-            default:
-                speedButton_1.layer.borderColor = UIColor.white.cgColor
-                speedButton_1.layer.borderWidth = 1.0
-        }
-        
-    }
+   
 }

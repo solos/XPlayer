@@ -8,6 +8,10 @@
 
 import UIKit
 
+
+let win = UIWindow(frame: UIScreen.main.bounds)
+let vc = UIViewController()
+
 extension UIImage {
     static func bundleImage(_ name: String) -> UIImage? {
         let frameworkBundle = Bundle.init(for: XPlayer.self)
@@ -22,5 +26,21 @@ extension UIImage {
 extension CGSize {
     static func square(_ border: CGFloat) -> CGSize {
         return CGSize(width: border, height: border)
+    }
+}
+
+public extension UIAlertController {
+    
+    func show() {
+        vc.view.backgroundColor = .clear
+        win.rootViewController = vc
+        win.windowLevel = UIWindow.Level.alert + 1  // Swift 3-4: UIWindowLevelAlert + 1
+        win.makeKeyAndVisible()
+        vc.present(self, animated: true, completion: nil)
+    }
+    
+    func hide(){
+        win.windowLevel = UIWindow.Level.normal - 1
+        vc.dismiss(animated: true, completion: nil)
     }
 }

@@ -71,11 +71,14 @@ class WOViewController: UIViewController {
 
         closeIconImageView.centerInSuperview()
         closeIconImageView.size(CGSize.square(12))
+        
 
         // Action
 		pipCloseButton.addTarget(self, action: #selector(didPressPipCloseButton), for: .touchUpInside)
 		transitionPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleTransitionPan))
 		view.addGestureRecognizer(transitionPanGesture)
+        
+        
 
         hangAroundPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handleHangAroundPan))
 		hangAroundPanGesture.isEnabled = false
@@ -92,71 +95,127 @@ class WOViewController: UIViewController {
 
 // MARK: Action
 extension WOViewController {
+    
+    @objc func handleSwipe(gesture: UISwipeGestureRecognizer) {
+        self.didPressPipCloseButton()
+    }
+    
 	@objc func handleTransitionPan(gesture: UIPanGestureRecognizer) {
-		guard let window = UIApplication.shared.keyWindow else { return }
+        
+        guard let window = UIApplication.shared.keyWindow else { return }
 		let translationY = gesture.translation(in: window).y
 		let targetTranslationY = min(max(translationY, 0), panningLength)
 		let percentage = min(1, targetTranslationY / panningLength)
-		switch gesture.state {
-		case .changed:
-			if percentage > 0 && !validatingPanning {
-				validatingPanning = true
-				didStartTransition()
-			}
-			updateFrame(
-				rect: inBetweenFrame(
-					outerFrame: UIScreen.main.bounds,
-					innerFrame: PIPRect, percentage: percentage
-				)
-			)
-		case .ended:
-			validatingPanning = false
-			if percentage < 0.3 {
-				var speed = gesture.velocity(in: window).y
-				if speed < 0 { speed = -speed }
-				if speed > 0 { speed = 0 }
-				speed = speed / ( panningLength * percentage )
-				willEnterFullScreen()
-				updateFrame(rect: UIScreen.main.bounds)
-				UIView.animate(
-					withDuration: 0.3,
-					delay: 0,
-					usingSpringWithDamping: 1,
-					initialSpringVelocity: speed,
-					options: [],
-					animations: {
-						window.layoutIfNeeded()
-					},
-					completion: { [weak self] _ in
-						self?.didEnterFullScreen()
-					}
-				)
-			} else {
-				var speed = gesture.velocity(in: window).y
-				if speed < 0 { speed = 0 }
-				speed = speed / ( panningLength * (1 - percentage) )
-				willEnterPIP()
-				updateFrame(rect: PIPRect)
-				UIView.animate(
-					withDuration: 0.3,
-					delay: 0,
-					usingSpringWithDamping: 1,
-					initialSpringVelocity: speed,
-					options: [],
-					animations: {
-						window.layoutIfNeeded()
-					},
-					completion: { [weak self] _ in
-						self?.didEnterPIP()
-					}
-				)
-			}
-		default: break
-		}
+        
+        if (translationY < 0) {
+
+            switch gesture.state {
+                case .changed:
+                    
+                    let width = UIScreen.main.bounds.width
+                    let height = UIScreen.main.bounds.height
+                    let rect = CGRect(x: 0, y: translationY, width: width, height: height)
+
+                    self.updateFrame(rect: rect)
+                    UIView.animate(withDuration: 0.2, animations: {
+                        window.layoutIfNeeded()
+                    })
+                    
+                    var speed = gesture.velocity(in: window).y
+                    if speed < 0 { speed = -speed }
+                    
+                case .failed:
+                    break;
+                case .cancelled:
+                    break;
+
+                case .ended:
+                    let perct = min(1, -translationY / panningLength)
+                    if perct > 0.2 {
+                        
+                        var speed = gesture.velocity(in: window).y
+                        if speed < 0 { speed = -speed }
+                        if speed > 0.3 {
+                            self.didPressPipCloseButton()
+                            return
+                        }
+                    }
+                    let width = UIScreen.main.bounds.width
+                    let height = UIScreen.main.bounds.height
+                    let rect = CGRect(x: 0, y: 0, width: width, height: height)
+                    self.updateFrame(rect: rect)
+                    UIView.animate(withDuration: 0.2, animations: {
+                        window.layoutIfNeeded()
+
+                    })
+
+                default: break
+            }
+        } else {
+            
+            switch gesture.state {
+                case .changed:
+                    if percentage > 0 && !validatingPanning {
+                        validatingPanning = true
+                        didStartTransition()
+                    }
+                    updateFrame(
+                        rect: inBetweenFrame(
+                            outerFrame: UIScreen.main.bounds,
+                            innerFrame: PIPRect, percentage: percentage
+                        )
+                    )
+                case .ended:
+                    validatingPanning = false
+                    if percentage < 0.3 {
+                        var speed = gesture.velocity(in: window).y
+                        if speed < 0 { speed = -speed }
+                        if speed > 0 { speed = 0 }
+                        speed = speed / ( panningLength * percentage )
+                        willEnterFullScreen()
+                        updateFrame(rect: UIScreen.main.bounds)
+                        UIView.animate(
+                            withDuration: 0.3,
+                            delay: 0,
+                            usingSpringWithDamping: 1,
+                            initialSpringVelocity: speed,
+                            options: [],
+                            animations: {
+                                window.layoutIfNeeded()
+                            },
+                            completion: { [weak self] _ in
+                                self?.didEnterFullScreen()
+                            }
+                        )
+                    } else {
+                        var speed = gesture.velocity(in: window).y
+                        if speed < 0 { speed = 0 }
+                        speed = speed / ( panningLength * (1 - percentage) )
+                        willEnterPIP()
+                        updateFrame(rect: PIPRect)
+                        UIView.animate(
+                            withDuration: 0.3,
+                            delay: 0,
+                            usingSpringWithDamping: 1,
+                            initialSpringVelocity: speed,
+                            options: [],
+                            animations: {
+                                window.layoutIfNeeded()
+                            },
+                            completion: { [weak self] _ in
+                                self?.didEnterPIP()
+                            }
+                        )
+                    }
+                default: break
+            }
+        }
+        
+		
 	}
 	
 	@objc func handleHangAroundPan(gesture: UIPanGestureRecognizer) {
-		guard let window = UIApplication.shared.keyWindow else { return }
+        guard let window = UIApplication.shared.keyWindow else { return }
 		if WOMaintainer.state != .pip { return }
 		let locationInWindow = gesture.location(in: window)
 		let targetRect = CGRect(x: locationInWindow.x - PIPRect.width / 2,
@@ -185,7 +244,7 @@ extension WOViewController {
 	}
 	
 	@objc func handleTap(gesture: UITapGestureRecognizer) {
-		guard let window = UIApplication.shared.keyWindow else { return }
+        guard let window = UIApplication.shared.keyWindow else { return }
 
 		if gesture.state != .ended { return }
 		if WOMaintainer.state == .pip {

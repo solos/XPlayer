@@ -32,8 +32,8 @@ class WOMaintainer {
 	static var state: WOState = .out
 	static var vc: WOViewController?
 	static func show(vc: WOViewController) {
-	guard let window = UIApplication.shared.keyWindow else { return }
-        //guard let window = UIApplication.shared.windows.last else { return }
+        guard let window = UIApplication.shared.keyWindow else { return }
+        //guard let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first else { return }
 
 		if WOMaintainer.state != .out {
 			dismiss(completion: {
