@@ -50,13 +50,29 @@ class XPlayerViewController: WOViewController {
 		super.init()
 		let playerItem = AVPlayerItem(url: url)
         self.url = url.absoluteString
-		
+
+        self.playerVC.player = AVPlayer(playerItem: playerItem)
+        self.playerVC.allowsPictureInPicturePlayback = true
+        //self.pip = AVPictureInPictureController.init(playerLayer: self.playerVC.player)
+        self.playerVC.view.backgroundColor = UIColor.black
+	}
+
+
+    init(url: URL, headers, headers: [String: String], themeColor: UIColor){
+		self.themeColor = themeColor
+		super.init()
+
+        self.url = url.absoluteString
+        let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
+		let playerItem = AVPlayerItem(asset: asset)
         
         self.playerVC.player = AVPlayer(playerItem: playerItem)
         self.playerVC.allowsPictureInPicturePlayback = true
         //self.pip = AVPictureInPictureController.init(playerLayer: self.playerVC.player)
         self.playerVC.view.backgroundColor = UIColor.black
 	}
+
+
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
